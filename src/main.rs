@@ -92,19 +92,19 @@ fn leer_archivo(){
                 if tokens.len() == palabras.len() {
                     // A partir de acá se puede proceder a realizar el analisis sintactico.
                     if analisis_sintactico(tokens) {
-                        writeln!(&mut nuevo, "{} {} Ok.", linea, numero).unwrap();
+                        writeln!(&mut nuevo, "Oración {} Ok.", numero).unwrap();
                     } else {
-                        writeln!(&mut nuevo, "{} {} Error de sintaxis.", linea, numero).unwrap();
+                        writeln!(&mut nuevo, "Oración {} Error de sintaxis.", numero).unwrap();
                     }
                 } else {
-                    writeln!(&mut nuevo, "{} {} Error de sintaxis.", linea, numero).unwrap();
+                    writeln!(&mut nuevo, "Oración {} Error de sintaxis.", numero).unwrap();
                 }
             } else {
-                writeln!(&mut nuevo, "{} {} Error de sintaxis.", linea, numero).unwrap();
+                writeln!(&mut nuevo, "Oración {} Error de sintaxis.", numero).unwrap();
             }
             
         } else {
-            writeln!(&mut nuevo, "{} {} Error de sintaxis.", linea, numero).unwrap();
+            writeln!(&mut nuevo, "Oración {} Error de sintaxis.", numero).unwrap();
         }
     }
 }
