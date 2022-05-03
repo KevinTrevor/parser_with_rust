@@ -1,0 +1,17 @@
+Juan juega las pelota. 0 Ok.
+Maria come con unos gatos. 1 Ok.
+Jesus quiere mucho por unas pelotas. 2 Ok.
+El perro llora. 3 Ok.
+Carlota corre. 4 Ok.
+Jesus Jesus Jesus. 5 Error de sintaxis.
+El gatos Juan. 6 Error de sintaxis.
+Pedro 7 Error de sintaxis.
+La gatos come muy a los fruta. 8 Ok.
+Juan JUEGA Gatos?. 9 Error de sintaxis.
+el juan llora. 10 Error de sintaxis.
+el perro juega el pelota. 11 Ok.
+pedro juega. 12 Error de sintaxis.
+jesus juega. 13 Ok.
+juan. 14 Error de sintaxis.
+MARIA. 15 Error de sintaxis.
+Los quieren perros como Juan. 16 Error de sintaxis.

@@ -1,0 +1,1 @@
+C:\Users\Alberto\ Gutiérrez\Documents\Visual\ Studio\ Code\Lenguajes\ de\ Programación\aprendiendo_rust\pruebas_proyecto1\target\debug\pruebas_proyecto1.exe: C:\Users\Alberto\ Gutiérrez\Documents\Visual\ Studio\ Code\Lenguajes\ de\ Programación\aprendiendo_rust\pruebas_proyecto1\src\main.rs
