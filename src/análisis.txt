@@ -13,5 +13,8 @@ Oración 11 Ok.
 Oración 12 Error de sintaxis.
 Oración 13 Ok.
 Oración 14 Error de sintaxis.
-Oración 15 Error de sintaxis.
+Oración 15 Ok.
 Oración 16 Error de sintaxis.
+Oración 17 Ok.
+Oración 18 Ok.
+Oración 19 Ok.

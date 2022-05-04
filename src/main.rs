@@ -1,9 +1,14 @@
 use std::io::{BufRead, BufReader, Write};
 use std::fs::File;
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 
 /* 
-    AQUÍ IRIA EL EBNF (SI LO TUVIERA EN DIGITAL)
+    EBNF 
+    <oracion>::= <sujeto> <predicado>'.'
+    <sujeto>:: <nombre> | <articulo> <sustantivo>
+    <predicado>:: <verbo> [<sujeto>] [<adjetivo>] | <verbo> <preposicion> <sujeto> 
+        | <verbo> <adverbio> (<preposicon> <sujeto> | (<sustantivo> | <adjetivo>))
+
 */
 fn main() {
     leer_archivo();  
@@ -190,7 +195,7 @@ fn analisis_sintactico<'a>(tokens: Vec<(&'a &'a str, &'a &'a str)>) -> bool {
     */
     let prod = generar_producciones();
     let n = tokens.len();
-    let mut solucion: Vec<Vec<String>> = vec![vec![String::from(""); n]; n]; 
+    let mut solucion: Vec<Vec<HashSet<String>>> = vec![vec![HashSet::new(); n]; n]; 
 
     /* 
         Utilizamos el algoritmo CYK para realizar el analisis sintáctico;
@@ -199,7 +204,7 @@ fn analisis_sintactico<'a>(tokens: Vec<(&'a &'a str, &'a &'a str)>) -> bool {
     for i in 0..n {
         for (clave, valor) in prod.iter() {
             if valor.contains(&vec![&tokens[i].1]) {
-                solucion[i][i].push_str(&clave);
+                solucion[i][i].insert(clave.to_string());
             }
         }
     }
@@ -214,9 +219,9 @@ fn analisis_sintactico<'a>(tokens: Vec<(&'a &'a str, &'a &'a str)>) -> bool {
                 for (clave, valores) in prod.iter() {
                     for valor in valores {
                         if valor.len() == 2 {
-                             if solucion[r][r + t].contains(&valor[0]) && 
-                                solucion[r + t + 1][r + l].contains(&valor[1]) {
-                                solucion[r][r + l].push_str(&clave);
+                             if solucion[r][r + t].contains(&valor[0].to_string()) && 
+                                solucion[r + t + 1][r + l].contains(&valor[1].to_string()) {
+                                solucion[r][r + l].insert(clave.to_string());
                             }
                         }
                     }
@@ -231,7 +236,7 @@ fn analisis_sintactico<'a>(tokens: Vec<(&'a &'a str, &'a &'a str)>) -> bool {
 
         Sino, entonces la cadena no pertenece al lenguaje.
     */
-    if solucion[0][n-1] == "oracion" {
+    if solucion[0][n-1].contains(&"oracion".to_string()) {
         return true;
     }
     return false;
