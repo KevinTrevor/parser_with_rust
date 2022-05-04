@@ -3,12 +3,22 @@ use std::fs::File;
 use std::collections::{HashMap, HashSet};
 
 /* 
-    EBNF 
+    ===================================Gramática EBNF============================================ 
     <oracion>::= <sujeto> <predicado>'.'
-    <sujeto>:: <nombre> | <articulo> <sustantivo>
-    <predicado>:: <verbo> [<sujeto>] [<adjetivo>] | <verbo> <preposicion> <sujeto> 
+    <sujeto>::= <nombre> | <articulo> <sustantivo>
+    <predicado>::= <verbo> [<sujeto>] [<adjetivo>] | <verbo> <preposicion> <sujeto> 
         | <verbo> <adverbio> (<preposicon> <sujeto> | (<sustantivo> | <adjetivo>))
-
+    <nombre>::= 'rosa' | 'maria' | 'carlota' | 'lucia' | 'juan' | 'diego' | 'luis' | 'jesus'
+    <articulo>::= 'la' | 'las' | 'el' | 'los' | 'un' | 'una' | 'unos' | 'unas'
+    <sustantivo>::= 'fruta' | 'perro' | 'perra' | 'gato' | 'gata' | 'pelota' | 'niño' | 'niña' |
+        'arbol' | 'frutas' | 'perros' | 'perras' | 'gatos' | 'gatas' | 'pelotas' | 'niños' | 
+        'niñas' | 'arboles'
+    <verbo>::= 'juega' | 'juegan' | 'come' | 'comen' | 'quiere' | 'quieren' | 'es' | 'son' | 
+        'corre' | 'corren' | 'llora' | 'lloran' 
+    <adjetivo>::= 'rapido' | 'rapidos' | 'grande' | 'grandes' | 'verde' | 'verdes' | 'roja' | 
+        'rojas' | 'pequeño' | 'pequeños' |
+    <preposicion>::= 'a' | 'con' | 'como' | 'por'
+    <adverbio>::= 'poco' | 'poca' | 'mucho' | 'mucha' | 'muy'
 */
 fn main() {
     leer_archivo();  
@@ -157,6 +167,8 @@ fn analisis_lexico<'a>(term: &'a HashMap<&'a str, Vec<&'a str>>, pal: &'a Vec<&'
 fn generar_producciones<'a>() -> HashMap<&'a str, Vec<Vec<&'a str>>> {
     /* 
         Instanciamos las producciones en CNF basado en nuestras producciones EBNF
+
+        =======================Gramática CNF=====================================
     */
     let producciones = HashMap::from([
         ("oracion", vec![vec!["sujeto", "predicado"]]),
