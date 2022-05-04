@@ -3,6 +3,9 @@ use std::fs::File;
 use std::collections::{HashMap, HashSet};
 
 /* 
+    ----------Datos Personales----------
+        Realizado por: Kevin Rojas
+        Cédula: 29.582.382
     ===================================Gramática EBNF============================================ 
     <oracion>::= <sujeto> <predicado>'.'
     <sujeto>::= <nombre> | <articulo> <sustantivo>
@@ -82,7 +85,7 @@ fn leer_archivo(){
         // La variable linea la usaremos para escribir en el nuevo archivo
         let linea: String = linea.unwrap(); 
         // La variable linea_lowercase la usaremos para separarla 
-        let mut linea_lowercase = linea.to_lowercase();
+        let mut linea_lowercase: String = linea.to_lowercase();
 
         /* 
             Corroboramos que nuestra línea termine con 
@@ -97,8 +100,8 @@ fn leer_archivo(){
             */
             if !es_numerico(&linea_lowercase) && !tiene_puntuacion(&linea_lowercase) {
                 // Luego separamos la linea_lowercase y la usaremos para el analisis léxico
-                let palabras = separar_string(&linea_lowercase);
-                let tokens = analisis_lexico(&terminales, &palabras);
+                let palabras: Vec<&str> = separar_string(&linea_lowercase);
+                let tokens: Vec<(&&str, &&str)> = analisis_lexico(&terminales, &palabras);
 
                 /* 
                     Corroboramos que todas las palabras tengan un token asociado; sino
@@ -106,7 +109,7 @@ fn leer_archivo(){
                 */
                 if tokens.len() == palabras.len() {
                     // A partir de acá se puede proceder a realizar el analisis sintactico.
-                    if analisis_sintactico(tokens) {
+                    if comprobar_sintaxis(&tokens) {
                         writeln!(&mut nuevo, "Oración {} Ok.", numero).unwrap();
                     } else {
                         writeln!(&mut nuevo, "Oración {} Error de sintaxis.", numero).unwrap();
@@ -169,6 +172,28 @@ fn generar_producciones<'a>() -> HashMap<&'a str, Vec<Vec<&'a str>>> {
         Instanciamos las producciones en CNF basado en nuestras producciones EBNF
 
         =======================Gramática CNF=====================================
+        <oracion> -> <sujeto> <predicado>
+        <sujeto> -> <articulo> <sustantivo> | 'rosa' | 'maria' | 'carlota' | 'lucia' | 'juan' | 'diego' | 
+            'luis' | 'jesus' 
+        <predicado> -> <verbo> <sujeto> | <verbo> <sujeto_adjetivo> | <verbo> <adjetivo> | 
+            <verbo> <preposicion_sujeto> | <verbo> <adverbio_preposicion_sujeto> | <verbo> <adverbio_sustantivo> | 
+            <verbo> <adverbio_adjetivo> | 'juega' | 'juegan' | 'come' | 'comen' | 'quiere' | 'quieren' | 'es' | 
+            'son' | 'corre' | 'corren' | 'llora' | 'lloran'
+        <verbo> -> 'juega' | 'juegan' | 'come' | 'comen' | 'quiere' | 'quieren' | 'es' | 'son' | 'corre' | 
+            'corren' | 'llora' | 'lloran'
+        <sujeto_adjetivo> -> <sujeto> <adjetivo>
+        <preposicion_sujeto> -> <preposicion> <sujeto>
+        <adverbio_preposicion_sujeto> -> <adverbio> <preposicion_sujeto>
+        <adverbio_sustantivo> -> <adverbio> <sustantivo>
+        <adverbio_adjetivo> -> <adverbio> <adjetivo>
+        <articulo> -> 'la' | 'las' | 'el' | 'los' | 'un' | 'una' | 'unos' | 'unas'
+        <sustantivo> -> 'fruta' | 'perro' | 'perra' | 'gato' | 'gata' | 'pelota' | 'niño' | 'niña' |
+            'arbol' | 'frutas' | 'perros' | 'perras' | 'gatos' | 'gatas' | 'pelotas' | 'niños' | 
+            'niñas' | 'arboles'
+        <adjetivo> -> 'rapido' | 'rapidos' | 'grande' | 'grandes' | 'verde' | 'verdes' | 'roja' | 
+            'rojas' | 'pequeño' | 'pequeños' |
+        <preposicion> -> 'a' | 'con' | 'como' | 'por'
+        <adverbio> -> 'poco' | 'poca' | 'mucho' | 'mucha' | 'muy'
     */
     let producciones = HashMap::from([
         ("oracion", vec![vec!["sujeto", "predicado"]]),
@@ -200,13 +225,28 @@ fn generar_producciones<'a>() -> HashMap<&'a str, Vec<Vec<&'a str>>> {
     return producciones;
 }
 
-fn analisis_sintactico<'a>(tokens: Vec<(&'a &'a str, &'a &'a str)>) -> bool {
+fn comprobar_sintaxis<'a>(tokens: &Vec<(&'a &'a str, &'a &'a str)>) -> bool {
+    let solucion: Vec<Vec<HashSet<String>>> = analisis_sintactico(&tokens);
+    let n: usize = tokens.len();
+    /* 
+        Si la matriz tiene el axioma en la posición fila 0 y columna n-1, 
+        quiere decir que la cadena pertenece al lenguaje. 
+
+        Sino, entonces la cadena no pertenece al lenguaje.
+    */
+    if solucion[0][n-1].contains(&"oracion".to_string()) {
+        return true;
+    }
+    return false;
+}
+
+fn analisis_sintactico<'a>(tokens: &Vec<(&'a &'a str, &'a &'a str)>) -> Vec<Vec<HashSet<String>>> {
     /*
         Instanciamos nuestras producciones en CNF, el tamaño de nuestros tokens
         y la matriz solución que usaremos para el analisis sintactico
     */
-    let prod = generar_producciones();
-    let n = tokens.len();
+    let prod: HashMap<&str, Vec<Vec<&str>>> = generar_producciones();
+    let n: usize = tokens.len();
     let mut solucion: Vec<Vec<HashSet<String>>> = vec![vec![HashSet::new(); n]; n]; 
 
     /* 
@@ -241,15 +281,5 @@ fn analisis_sintactico<'a>(tokens: Vec<(&'a &'a str, &'a &'a str)>) -> bool {
             }
         }
     }
-
-    /* 
-        Si la matriz tiene el axioma en la posición fila 0 y columna n-1, 
-        quiere decir que la cadena pertenece al lenguaje. 
-
-        Sino, entonces la cadena no pertenece al lenguaje.
-    */
-    if solucion[0][n-1].contains(&"oracion".to_string()) {
-        return true;
-    }
-    return false;
+    return solucion;
 }
