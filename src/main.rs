@@ -1,5 +1,5 @@
 use std::io::{BufRead, BufReader, Write};
-use std::fs::File;
+use std::fs::{File};
 use std::collections::{HashMap, HashSet};
 
 /* 
@@ -88,7 +88,8 @@ fn leer_archivo(){
         let mut linea_lowercase: String = linea.to_lowercase();
 
         /* 
-            Corroboramos que nuestra línea termine con 
+            Corroboramos que nuestra línea termine con un punto '.'; si no es así, 
+            la oración no pertenece al lenguaje. 
         */
         if linea.ends_with('.') {
             // Primero quitamos el punto de nuestra linea_lowercase 
@@ -137,8 +138,10 @@ fn crear_archivo_escritura() -> File {
 fn abrir_archivo_lectura() -> File {
     // Aqui abrimos el archivo, con el pathing src/oraciones.txt, en modo lectura
     let path: &str = "src/oraciones.txt";
-    let archivo: File = File::open(path).unwrap();
-    return archivo;
+    match File::open(path) {
+        Ok(arch) => arch,
+        Err(_) => panic!("Error: Archivo de entrada no encontrado.")
+    }
 }
 
 fn analisis_lexico<'a>(term: &'a HashMap<&'a str, Vec<&'a str>>, pal: &'a Vec<&'a str>) -> Vec<(&'a &'a str, &'a &'a str)> {
@@ -152,14 +155,14 @@ fn analisis_lexico<'a>(term: &'a HashMap<&'a str, Vec<&'a str>>, pal: &'a Vec<&'
         /* 
             Para cada palabra en el vector de palabras se hará una comparación 
         */
-        for (tipo, valor) in term.iter() {
+        for (clave, valor) in term.iter() {
             /* 
                 La comparación se hace con cada uno de los simbolos terminales de
                 cada categoría y, si esa categoría contiene la palabra, entonces
                 se creará un token y se almacenará en nuestro vector tokens 
             */
             if valor.contains(&palabra){
-                let token = (tipo, palabra);
+                let token = (clave, palabra);
                 tokens.push(token);
             }
         }

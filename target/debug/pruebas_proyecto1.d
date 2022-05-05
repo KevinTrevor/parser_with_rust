@@ -1,1 +1,1 @@
-C:\Users\YARITZA\Documents\Visual\ Studio\ Code\parser_with_rust\target\debug\pruebas_proyecto1.exe: C:\Users\YARITZA\Documents\Visual\ Studio\ Code\parser_with_rust\src\main.rs
+C:\Users\Alberto\ Gutiérrez\Documents\Visual\ Studio\ Code\Lenguajes\ de\ Programación\aprendiendo_rust\parser_with_rust\target\debug\pruebas_proyecto1.exe: C:\Users\Alberto\ Gutiérrez\Documents\Visual\ Studio\ Code\Lenguajes\ de\ Programación\aprendiendo_rust\parser_with_rust\src\main.rs
