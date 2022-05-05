@@ -20,3 +20,5 @@ Oración 18 Ok.
 Oración 19 Ok.
 Oración 20 Error de sintaxis.
 Oración 21 Ok.
+Oración 22 Ok.
+Oración 23 Error de sintaxis.

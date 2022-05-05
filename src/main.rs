@@ -46,7 +46,7 @@ fn run(){
 
     for (numero, linea) in reader.lines().enumerate(){
         // La variable linea_lowercase la usaremos para separarla 
-        let mut linea_lowercase: String = linea.unwrap().to_lowercase();
+        let mut linea_lowercase: String = linea.unwrap().trim().to_lowercase();
 
         /* 
             Corroboramos que nuestra línea termine con un punto '.'; si no es así, 
