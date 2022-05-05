@@ -19,3 +19,4 @@ Oración 17 Ok.
 Oración 18 Ok.
 Oración 19 Ok.
 Oración 20 Error de sintaxis.
+Oración 21 Ok.

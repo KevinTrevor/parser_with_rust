@@ -24,7 +24,7 @@ use std::collections::{HashMap, HashSet};
     <adverbio>::= 'poco' | 'poca' | 'mucho' | 'mucha' | 'muy'
 */
 fn main() {
-    leer_archivo();  
+    run();  
 }
 
 fn separar_string(oracion: &str) -> Vec<&str>{
@@ -33,33 +33,7 @@ fn separar_string(oracion: &str) -> Vec<&str>{
     return vector;
 }
 
-fn es_numerico(cadena: &String) -> bool {
-    /*
-        Separamos una cadena en caracteres para saber si posee algun
-        caracter numérico.
-    */
-    for caracter in cadena.chars(){
-        if caracter.is_numeric() {
-            return true;
-        }
-    }
-    return false;
-}
-
-fn tiene_puntuacion(cadena: &String) -> bool {
-    /*
-        Separamos una cadena en caracteres para saber si posee algun
-        símbolo de puntuación (sin incluir el espacio en blanco).
-    */
-    for caracter in cadena.chars(){
-        if caracter.is_ascii_punctuation() && caracter != ' '{
-            return true;
-        }
-    }
-    return false;
-}
-
-fn leer_archivo(){
+fn run(){
     // Aqui llamamos a las funciones para obtener los archivos de lectura y escritura
     let archivo: File = abrir_archivo_lectura();
     let mut nuevo: File = crear_archivo_escritura(); 
@@ -68,30 +42,17 @@ fn leer_archivo(){
     let reader: BufReader<File> = BufReader::new(archivo);
 
     // Instanciamos el HashMap que contiene nuestros simbolos terminales
-    let terminales = HashMap::from([
-        ("nombre", vec!["rosa", "maria", "carlota", "lucia", "juan", "diego", "luis", "jesus"]),
-        ("articulo", vec!["la", "las", "el", "los", "un", "una", "unos", "unas"]),
-        ("sustantivo", vec!["fruta", "perro", "perra", "gato", "gata", "niño", "niña", "arbol", 
-            "pelota", "perros", "perras", "gatos", "gatas", "pelotas", "niños", "niñas", "arboles"]),
-        ("verbo", vec!["juega", "juegan", "come", "comen", "quiere", "quieren", "es", "son", 
-            "corre", "corren", "llora", "lloran"]),
-        ("preposicion", vec!["a", "con", "como", "por"]),
-        ("adverbio", vec!["poco", "poca", "mucho", "mucha", "muy"]),
-        ("adjetivo", vec!["rapido", "rapidos", "grande", "grandes", "verde", "verdes", "roja", 
-            "rojas", "pequeño", "pequeños"])
-    ]);
+    let terminales: HashMap<&str, Vec<&str>> = generar_terminales();
 
     for (numero, linea) in reader.lines().enumerate(){
-        // La variable linea la usaremos para escribir en el nuevo archivo
-        let linea: String = linea.unwrap(); 
         // La variable linea_lowercase la usaremos para separarla 
-        let mut linea_lowercase: String = linea.to_lowercase();
+        let mut linea_lowercase: String = linea.unwrap().to_lowercase();
 
         /* 
             Corroboramos que nuestra línea termine con un punto '.'; si no es así, 
             la oración no pertenece al lenguaje. 
         */
-        if linea.ends_with('.') {
+        if linea_lowercase.ends_with('.') {
             // Primero quitamos el punto de nuestra linea_lowercase 
             linea_lowercase.pop();
             
@@ -128,11 +89,42 @@ fn leer_archivo(){
     }
 }
 
+fn es_numerico(cadena: &String) -> bool {
+    /*
+        Separamos una cadena en caracteres para saber si posee algun
+        caracter numérico.
+    */
+    for caracter in cadena.chars(){
+        if caracter.is_numeric() {
+            return true;
+        }
+    }
+    return false;
+}
+
+fn tiene_puntuacion(cadena: &String) -> bool {
+    /*
+        Separamos una cadena en caracteres para saber si posee algun
+        símbolo de puntuación (sin incluir el espacio en blanco).
+    */
+    for caracter in cadena.chars(){
+        if caracter.is_ascii_punctuation() && caracter != ' '{
+            return true;
+        }
+    }
+    return false;
+}
+
+
+
 fn crear_archivo_escritura() -> File {
     // Crear un archivo en modo escritura
     // Esto crea el archivo si no existe y lo deja en blanco si ya existe
-    let nuevo_archivo: File = File::create("src/análisis.txt").unwrap();
-    return nuevo_archivo;
+    let path: &str = "src/análisis.txt";
+    match File::create(path) {
+        Ok(arch) => arch,
+        Err(_) => panic!("Error: Archivo de salida no pudo ser creado")
+    }
 }
 
 fn abrir_archivo_lectura() -> File {
@@ -144,30 +136,23 @@ fn abrir_archivo_lectura() -> File {
     }
 }
 
-fn analisis_lexico<'a>(term: &'a HashMap<&'a str, Vec<&'a str>>, pal: &'a Vec<&'a str>) -> Vec<(&'a &'a str, &'a &'a str)> {
-    /*
-        Creamos un vector vacío, donde almacenaremos una tupla que almacenara
-        (tipo, valor) de nuestros tokens pertenencientes a nuestros simbolos terminales
+fn generar_terminales<'a>() -> HashMap<&'a str, Vec<&'a str>> {
+    /* 
+        Generamos los símbolos terminales basado en el EBNF anteriormente descrito.
     */
-    let mut tokens = Vec::new();
-
-    for palabra in pal {
-        /* 
-            Para cada palabra en el vector de palabras se hará una comparación 
-        */
-        for (clave, valor) in term.iter() {
-            /* 
-                La comparación se hace con cada uno de los simbolos terminales de
-                cada categoría y, si esa categoría contiene la palabra, entonces
-                se creará un token y se almacenará en nuestro vector tokens 
-            */
-            if valor.contains(&palabra){
-                let token = (clave, palabra);
-                tokens.push(token);
-            }
-        }
-    }
-    return tokens;
+    let terminales: HashMap<&str, Vec<&str>>  = HashMap::from([
+        ("nombre", vec!["rosa", "maria", "carlota", "lucia", "juan", "diego", "luis", "jesus"]),
+        ("articulo", vec!["la", "las", "el", "los", "un", "una", "unos", "unas"]),
+        ("sustantivo", vec!["fruta", "perro", "perra", "gato", "gata", "niño", "niña", "arbol", 
+            "pelota", "perros", "perras", "gatos", "gatas", "pelotas", "niños", "niñas", "arboles"]),
+        ("verbo", vec!["juega", "juegan", "come", "comen", "quiere", "quieren", "es", "son", 
+            "corre", "corren", "llora", "lloran"]),
+        ("preposicion", vec!["a", "con", "como", "por"]),
+        ("adverbio", vec!["poco", "poca", "mucho", "mucha", "muy"]),
+        ("adjetivo", vec!["rapido", "rapidos", "grande", "grandes", "verde", "verdes", "roja", 
+            "rojas", "pequeño", "pequeños"])
+    ]);
+    return terminales;
 }
 
 fn generar_producciones<'a>() -> HashMap<&'a str, Vec<Vec<&'a str>>> {
@@ -198,7 +183,7 @@ fn generar_producciones<'a>() -> HashMap<&'a str, Vec<Vec<&'a str>>> {
         <preposicion> -> 'a' | 'con' | 'como' | 'por'
         <adverbio> -> 'poco' | 'poca' | 'mucho' | 'mucha' | 'muy'
     */
-    let producciones = HashMap::from([
+    let producciones: HashMap<&str, Vec<Vec<&str>>> = HashMap::from([
         ("oracion", vec![vec!["sujeto", "predicado"]]),
         ("sujeto", vec![vec!["articulo", "sustantivo"], vec!["rosa"], vec!["maria"],  
             vec!["carlota"], vec!["lucia"], vec!["juan"], vec!["diego"], vec!["luis"], vec!["jesus"]]),
@@ -226,6 +211,32 @@ fn generar_producciones<'a>() -> HashMap<&'a str, Vec<Vec<&'a str>>> {
         ("adverbio", vec![vec!["poco"], vec!["poca"], vec!["mucho"], vec!["mucha"], vec!["muy"]])
     ]);
     return producciones;
+}
+
+fn analisis_lexico<'a>(terminales: &'a HashMap<&'a str, Vec<&'a str>>, palabras: &'a Vec<&'a str>) -> Vec<(&'a &'a str, &'a &'a str)> {
+    /*
+        Creamos un vector vacío, donde almacenaremos una tupla que almacenara
+        (tipo, valor) de nuestros tokens pertenencientes a nuestros simbolos terminales
+    */
+    let mut tokens: Vec<(&&str, &&str)> = Vec::new();
+
+    for palabra in palabras {
+        /* 
+            Para cada palabra en el vector de palabras se hará una comparación 
+        */
+        for (clave, valor) in terminales.iter() {
+            /* 
+                La comparación se hace con cada uno de los simbolos terminales de
+                cada categoría y, si esa categoría contiene la palabra, entonces
+                se creará un token y se almacenará en nuestro vector tokens 
+            */
+            if valor.contains(&palabra){
+                let token = (clave, palabra);
+                tokens.push(token);
+            }
+        }
+    }
+    return tokens;
 }
 
 fn comprobar_sintaxis<'a>(tokens: &Vec<(&'a &'a str, &'a &'a str)>) -> bool {
