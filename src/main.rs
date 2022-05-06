@@ -6,7 +6,7 @@ use std::collections::{HashMap, HashSet};
     ----------Datos Personales----------
         Realizado por: Kevin Rojas
         Cédula: 29.582.382
-    ===================================Gramática EBNF============================================ 
+    ===================================Notación EBNF============================================ 
     <oracion>::= <sujeto> <predicado>'.'
     <sujeto>::= <nombre> | <articulo> <sustantivo>
     <predicado>::= <verbo> [<sujeto>] [<adjetivo>] | <verbo> <preposicion> <sujeto> 
@@ -115,8 +115,6 @@ fn tiene_puntuacion(cadena: &String) -> bool {
     return false;
 }
 
-
-
 fn crear_archivo_escritura() -> File {
     // Crear un archivo en modo escritura
     // Esto crea el archivo si no existe y lo deja en blanco si ya existe
@@ -159,7 +157,7 @@ fn generar_producciones<'a>() -> HashMap<&'a str, Vec<Vec<&'a str>>> {
     /* 
         Instanciamos las producciones en CNF basado en nuestras producciones EBNF
 
-        =======================Gramática CNF=====================================
+        =======================Notación CNF=====================================
         <oracion> -> <sujeto> <predicado>
         <sujeto> -> <articulo> <sustantivo> | 'rosa' | 'maria' | 'carlota' | 'lucia' | 'juan' | 'diego' | 
             'luis' | 'jesus' 
